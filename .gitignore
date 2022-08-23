@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 # Image datasets for training and testing
-/notebook/dataset
+/notebook/~
 /cli/test_images
