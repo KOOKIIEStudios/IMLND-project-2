@@ -131,3 +131,6 @@ dmypy.json
 # Image datasets for training and testing
 /notebook/~
 /cli/test_images
+
+# IntelliJ files
+cli/.idea
