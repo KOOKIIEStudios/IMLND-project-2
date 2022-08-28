@@ -35,7 +35,7 @@ mode: int
 
 
 def predict(image: np.ndarray, model: tf.keras.Model) -> np.ndarray:
-    pass
+    return model(image, training=False).numpy().flatten()
 
 
 if __name__ == "__main__":
