@@ -22,6 +22,9 @@ in the dataset.
 import sys
 from argparse import ArgumentParser, Namespace
 
+import numpy as np
+import tensorflow as tf
+
 import io_handler
 import operation_mode
 
@@ -29,6 +32,10 @@ import operation_mode
 cli_parser: ArgumentParser
 cli_arguments: Namespace
 mode: int
+
+
+def predict(image: np.ndarray, model: tf.keras.Model) -> np.ndarray:
+    pass
 
 
 if __name__ == "__main__":
