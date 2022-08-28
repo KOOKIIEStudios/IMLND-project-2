@@ -2,7 +2,6 @@
 
 This includes command line arguments, as well as file system interactions.
 """
-
 import argparse
 from pathlib import Path
 
@@ -71,3 +70,15 @@ def are_paths_valid(arguments: argparse.Namespace) -> bool:
             print("Invalid category label file path!")
             return False
     return True
+
+
+def has_k_flag(arguments: argparse.Namespace) -> bool:
+    if arguments.top_k is not None:
+        return True
+    return False
+
+
+def has_category_flag(arguments: argparse.Namespace) -> bool:
+    if arguments.label_map is not None:
+        return True
+    return False

@@ -23,10 +23,12 @@ import sys
 from argparse import ArgumentParser, Namespace
 
 import io_handler
+import operation_mode
 
 
 cli_parser: ArgumentParser
 cli_arguments: Namespace
+mode: int
 
 
 if __name__ == "__main__":
@@ -35,3 +37,7 @@ if __name__ == "__main__":
     # print(vars(cli_arguments))  # debug print
     if not io_handler.are_paths_valid(cli_arguments):  # Sanity check
         sys.exit("This program will now terminate.")
+    mode = operation_mode.get_mode(
+        io_handler.has_k_flag(cli_arguments),
+        io_handler.has_category_flag(cli_arguments),
+    )
