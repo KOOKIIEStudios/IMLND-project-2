@@ -25,6 +25,7 @@ from argparse import ArgumentParser, Namespace
 import numpy as np
 import tensorflow as tf
 
+import format
 import io_handler
 import operation_mode
 
@@ -32,6 +33,8 @@ import operation_mode
 cli_parser: ArgumentParser
 cli_arguments: Namespace
 mode: int
+k_value: int | None
+label_map: dict[str, str] | None
 
 
 def predict(image: np.ndarray, model: tf.keras.Model) -> np.ndarray:
@@ -39,12 +42,30 @@ def predict(image: np.ndarray, model: tf.keras.Model) -> np.ndarray:
 
 
 if __name__ == "__main__":
+    print("Flower prediction script started.")
+    # Grab CLI arguments
     cli_parser = io_handler.initialise_parser()
     cli_arguments = cli_parser.parse_args()
+
+    # Sanity check:
     # print(vars(cli_arguments))  # debug print
-    if not io_handler.are_paths_valid(cli_arguments):  # Sanity check
+    if not io_handler.are_paths_valid(cli_arguments):
         sys.exit("This program will now terminate.")
+
+    # Set variables:
     mode = operation_mode.get_mode(
         io_handler.has_k_flag(cli_arguments),
         io_handler.has_category_flag(cli_arguments),
     )
+    image, model = io_handler.load(cli_arguments)
+    k_value, label_map = io_handler.load_label_map(cli_arguments)
+
+    # Make prediction:
+    prediction = format.convert_to_dataframe(predict(image, model))
+    output_text: list[str] = format.format_output(mode, prediction, k_value, label_map)
+
+    # Output to console:
+    for line in output_text:
+        print(line)
+    print("End of script reached.")
+    print("-------------------------------------------------------------------")

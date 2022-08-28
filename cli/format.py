@@ -28,3 +28,31 @@ def convert_to_dataframe(prediction: np.ndarray) -> pd.DataFrame:
         columns=["probabilities"],
     )
     return dataframe.sort_values(by=["probabilities"], ascending=False)
+
+
+def filter_top_k_results(prediction: pd.DataFrame, k: int) -> (list[np.float32], list[int]):
+    """Filters out the top k results, as a pair of lists
+
+    First list is the probabilities, second list are the numeric labels
+    """
+    top_k_results = prediction.head(k)
+    return top_k_results["probabilities"].values.tolist(), top_k_results.index.tolist()
+
+
+def basic_output(prediction: pd.DataFrame) -> list[str]:
+    buffer: list[str] = []
+    probabilities, labels = filter_top_k_results(prediction, 1)
+    buffer += f"This flower is most likely: {labels[0]}"
+    buffer += f"    Probability: {probabilities[0]}"
+    return buffer
+
+
+def format_output(
+    mode: int,
+    prediction: pd.DataFrame,
+    k_flag: int | None,
+    label_map: dict[str, str] | None,
+) -> list[str]:
+    match mode:
+        case operation_mode.Mode.NO_ARGS:
+            return basic_output(prediction)
