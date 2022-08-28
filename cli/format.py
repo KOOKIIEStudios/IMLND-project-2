@@ -22,6 +22,7 @@ def process_image(image: np.ndarray) -> np.ndarray:
 
 
 def convert_to_dataframe(prediction: np.ndarray) -> pd.DataFrame:
+    # NOTE: The label map starts from index 1!
     dataframe = pd.DataFrame(
         prediction,
         index=range(1, NUMBER_OF_CLASSES + 1),  # associate with labels, in a way that's resistant to sorting
@@ -58,7 +59,13 @@ def top_k_output(prediction: pd.DataFrame, k_value: int) -> list[str]:
 
 
 def labeled_top_output(prediction: pd.DataFrame, label_map: dict[str, str]) -> list[str]:
-    pass
+    buffer: list[str] = []
+    probabilities, labels = filter_top_k_results(prediction, 1)
+    label_name = label_map.get(labels[0])
+    # There is only one element in each list:
+    buffer += f"This flower is most likely: {label_name}"
+    buffer += f"    Probability: {probabilities[0]}"
+    return buffer
 
 
 def labeled_top_k_output(
