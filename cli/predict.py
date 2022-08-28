@@ -19,6 +19,19 @@ in the dataset.
     python predict.py ./test_images/image_0001.jpg saved_model.h5 --category_names label_map.json
     python predict.py ./test_images/rose.jpg 1661623189.h5 --top_k 5 --category_names label_map.json
 """
+import sys
+from argparse import ArgumentParser, Namespace
+
+import io_handler
+
+
+cli_parser: ArgumentParser
+cli_arguments: Namespace
+
 
 if __name__ == "__main__":
-    print("This script will predict flowers from a provided image.")
+    cli_parser = io_handler.initialise_parser()
+    cli_arguments = cli_parser.parse_args()
+    # print(vars(cli_arguments))  # debug print
+    if not io_handler.are_paths_valid(cli_arguments):  # Sanity check
+        sys.exit("This program will now terminate.")
