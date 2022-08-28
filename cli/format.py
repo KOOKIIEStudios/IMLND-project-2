@@ -42,9 +42,31 @@ def filter_top_k_results(prediction: pd.DataFrame, k: int) -> (list[np.float32],
 def basic_output(prediction: pd.DataFrame) -> list[str]:
     buffer: list[str] = []
     probabilities, labels = filter_top_k_results(prediction, 1)
+    # There is only one element in each list:
     buffer += f"This flower is most likely: {labels[0]}"
     buffer += f"    Probability: {probabilities[0]}"
     return buffer
+
+
+def top_k_output(prediction: pd.DataFrame, k_value: int) -> list[str]:
+    buffer: list[str] = []
+    probabilities, labels = filter_top_k_results(prediction, k_value)
+    buffer.append(f"Here are the {k_value} most-likely results (from most- to least-likely):")
+    for iteration in range(k_value):
+        buffer.append(f"    {iteration}. Label: {labels[iteration]}, Likelihood: {probabilities[iteration]}")
+    return buffer
+
+
+def labeled_top_output(prediction: pd.DataFrame, label_map: dict[str, str]) -> list[str]:
+    pass
+
+
+def labeled_top_k_output(
+    prediction: pd.DataFrame,
+    k_value: int,
+    label_map: dict[str, str],
+) -> list[str]:
+    pass
 
 
 def format_output(
@@ -56,3 +78,14 @@ def format_output(
     match mode:
         case operation_mode.Mode.NO_ARGS:
             return basic_output(prediction)
+        case operation_mode.Mode.TOP_K:
+            return top_k_output(prediction, k_flag)
+        case operation_mode.Mode.CATEGORY:
+            return labeled_top_output(prediction, label_map)
+        case operation_mode.Mode.BOTH:
+            return labeled_top_k_output(prediction, k_flag, label_map)
+        case _:
+            return [
+                "We have no idea how you got here, but you did.",
+                "Congratulations, you have broken the script.",
+            ]
