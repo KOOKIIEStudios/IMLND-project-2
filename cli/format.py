@@ -44,8 +44,8 @@ def basic_output(prediction: pd.DataFrame) -> list[str]:
     buffer: list[str] = []
     probabilities, labels = filter_top_k_results(prediction, 1)
     # There is only one element in each list:
-    buffer += f"This flower is most likely: {labels[0]}"
-    buffer += f"    Probability: {probabilities[0]:.2%}"
+    buffer.append(f"This flower is most likely: {labels[0]}")
+    buffer.append(f"    Probability: {probabilities[0]:.2%}")
     return buffer
 
 
@@ -63,8 +63,8 @@ def labeled_top_output(prediction: pd.DataFrame, label_map: dict[str, str]) -> l
     probabilities, labels = filter_top_k_results(prediction, 1)
     label_name = label_map.get(str(labels[0]))
     # There is only one element in each list:
-    buffer += f"This flower is most likely: {label_name}"
-    buffer += f"    Probability: {probabilities[0]:.2%}"
+    buffer.append(f"This flower is most likely: {label_name}")
+    buffer.append(f"    Probability: {probabilities[0]:.2%}")
     return buffer
 
 
