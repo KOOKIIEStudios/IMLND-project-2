@@ -44,7 +44,9 @@ def basic_output(prediction: pd.DataFrame) -> list[str]:
     buffer: list[str] = []
     probabilities, labels = filter_top_k_results(prediction, 1)
     # There is only one element in each list:
-    buffer.append(f"This flower is most likely: {labels[0]}")
+    # Dataset starts from index 0:
+    processed_label = labels[0] - 1
+    buffer.append(f"This flower is most likely: {processed_label}")
     buffer.append(f"    Probability: {probabilities[0]:.2%}")
     return buffer
 
@@ -52,9 +54,11 @@ def basic_output(prediction: pd.DataFrame) -> list[str]:
 def top_k_output(prediction: pd.DataFrame, k_value: int) -> list[str]:
     buffer: list[str] = []
     probabilities, labels = filter_top_k_results(prediction, k_value)
+    # Dataset starts from index 0:
+    processed_labels = [label - 1 for label in labels]
     buffer.append(f"Here are the {k_value} most-likely results (from most- to least-likely):")
     for iteration in range(k_value):
-        buffer.append(f"    {iteration + 1}. Label: {labels[iteration]}, Likelihood: {probabilities[iteration]:.2%}")
+        buffer.append(f"    {iteration + 1}. Label: {processed_labels[iteration]}, Likelihood: {probabilities[iteration]:.2%}")
     return buffer
 
 
