@@ -61,7 +61,8 @@ if __name__ == "__main__":
     k_value, label_map = io_handler.get_optional_flags(cli_arguments)
 
     # Make prediction:
-    prediction = format.convert_to_dataframe(predict(image, model))
+    processed_image = format.process_image(image)
+    prediction = format.convert_to_dataframe(predict(processed_image, model))
     output_text: list[str] = format.format_output(mode, prediction, k_value, label_map)
 
     # Output to console:
