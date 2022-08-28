@@ -3,6 +3,7 @@
 This includes command line arguments, as well as file system interactions.
 """
 import argparse
+import json
 from pathlib import Path
 
 import numpy as np
@@ -88,6 +89,23 @@ def has_category_flag(arguments: argparse.Namespace) -> bool:
     if arguments.label_map is not None:
         return True
     return False
+
+
+def load_label_map(arguments: argparse.Namespace) -> dict | None:
+    label_path = arguments.label_map
+    if label_path is None:
+        return None
+    with open(label_path, "r") as file:
+        label_map = json.load(file)
+    return label_map
+
+
+def get_optional_flags(
+    arguments: argparse.Namespace
+) -> tuple[int | None, dict | None]:
+    k_value = arguments.top_k
+    label_map = load_label_map(arguments)
+    return k_value, label_map
 
 
 def load_model(model_path: Path) -> tf.keras.Model:
