@@ -5,6 +5,9 @@ This includes command line arguments, as well as file system interactions.
 import argparse
 from pathlib import Path
 
+import tensorflow as tf
+import tensorflow_hub as hub
+
 
 def initialise_parser() -> argparse.ArgumentParser:
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
@@ -82,3 +85,19 @@ def has_category_flag(arguments: argparse.Namespace) -> bool:
     if arguments.label_map is not None:
         return True
     return False
+
+
+def load_model(model_path: Path) -> tf.keras.Model:
+    try:
+        return tf.keras.models.load_model(
+            model_path,
+            custom_objects={"KerasLayer": hub.KerasLayer},
+        )
+    except ImportError as e:
+        print("HDF5 loading unavailable!")
+        print(e)
+    except IOError as e:
+        print("Invalid save file!")
+        print(e)
+    except Exception as e:
+        print(f"Unexpected error: {e}")
