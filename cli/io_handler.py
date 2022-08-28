@@ -5,8 +5,11 @@ This includes command line arguments, as well as file system interactions.
 import argparse
 from pathlib import Path
 
+import numpy as np
+import PIL
 import tensorflow as tf
 import tensorflow_hub as hub
+from PIL import Image
 
 
 def initialise_parser() -> argparse.ArgumentParser:
@@ -93,11 +96,23 @@ def load_model(model_path: Path) -> tf.keras.Model:
             model_path,
             custom_objects={"KerasLayer": hub.KerasLayer},
         )
-    except ImportError as e:
+    except ImportError:
         print("HDF5 loading unavailable!")
-        print(e)
-    except IOError as e:
+        raise
+    except IOError:
         print("Invalid save file!")
-        print(e)
-    except Exception as e:
-        print(f"Unexpected error: {e}")
+        raise
+
+
+def load_image(image_path: Path) -> np.ndarray:
+    try:
+        with Image.open(image_path) as im:
+            image_array = np.asarray(im)  # ignore this warning - this is the recommended way as of Pillow 9.2.0
+        return image_array
+    except PIL.UnidentifiedImageError:
+        print("Unable to identify/open the image!")
+        raise
+
+
+def load(arguments: argparse.Namespace) -> (np.ndarray, tf.keras.Model):
+    return load_image(arguments.image_path), load_model(arguments.model_path)
