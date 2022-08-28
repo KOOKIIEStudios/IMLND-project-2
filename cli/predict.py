@@ -58,7 +58,7 @@ if __name__ == "__main__":
         io_handler.has_category_flag(cli_arguments),
     )
     image, model = io_handler.load(cli_arguments)
-    k_value, label_map = io_handler.load_label_map(cli_arguments)
+    k_value, label_map = io_handler.get_optional_flags(cli_arguments)
 
     # Make prediction:
     prediction = format.convert_to_dataframe(predict(image, model))
