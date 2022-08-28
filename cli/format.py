@@ -54,7 +54,7 @@ def top_k_output(prediction: pd.DataFrame, k_value: int) -> list[str]:
     probabilities, labels = filter_top_k_results(prediction, k_value)
     buffer.append(f"Here are the {k_value} most-likely results (from most- to least-likely):")
     for iteration in range(k_value):
-        buffer.append(f"    {iteration}. Label: {labels[iteration]}, Likelihood: {probabilities[iteration]:.2%}")
+        buffer.append(f"    {iteration + 1}. Label: {labels[iteration]}, Likelihood: {probabilities[iteration]:.2%}")
     return buffer
 
 
@@ -78,7 +78,7 @@ def labeled_top_k_output(
     label_names = [label_map.get(str(element)) for element in label_numbers]
     buffer.append(f"Here are the {k_value} most-likely results (from most- to least-likely):")
     for iteration in range(k_value):
-        buffer.append(f"    {iteration}. Label: {label_names[iteration]}, Likelihood: {probabilities[iteration]:.2%}")
+        buffer.append(f"    {iteration + 1}. Label: {label_names[iteration]}, Likelihood: {probabilities[iteration]:.2%}")
     return buffer
 
 
