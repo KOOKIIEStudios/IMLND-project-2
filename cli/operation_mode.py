@@ -1,6 +1,5 @@
 """This module represents the possible modes of operation"""
 from enum import Enum
-from pathlib import Path
 
 
 class Mode(Enum):

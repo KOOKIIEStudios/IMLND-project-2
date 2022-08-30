@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
-import io_handler
 import operation_mode
 
 
@@ -11,6 +10,17 @@ import operation_mode
 IMAGE_SHAPE = 224
 RESCALE_FACTOR = 255
 NUMBER_OF_CLASSES = 102
+
+
+def format_label_map(label_map: dict[str, str] | None) -> dict[str, str] | None:
+    """Make label maps that start from index 1 start from index 0"""
+    if label_map is None or "0" in label_map:
+        return label_map  # No need to do anything if index already starts from 0
+    buffer: dict[str, str] = {}
+    for index, label in label_map.items():
+        new_index = str(int(index) - 1)
+        buffer[new_index] = label
+    return buffer
 
 
 def process_image(image: np.ndarray) -> np.ndarray:
@@ -22,10 +32,9 @@ def process_image(image: np.ndarray) -> np.ndarray:
 
 
 def convert_to_dataframe(prediction: np.ndarray) -> pd.DataFrame:
-    # NOTE: The label map starts from index 1!
     dataframe = pd.DataFrame(
         prediction,
-        index=range(1, NUMBER_OF_CLASSES + 1),  # associate with labels, in a way that's resistant to sorting
+        index=range(0, NUMBER_OF_CLASSES),  # associate with labels, in a way that's resistant to sorting
         columns=["probabilities"],
     )
     return dataframe.sort_values(by=["probabilities"], ascending=False)
@@ -44,8 +53,7 @@ def basic_output(prediction: pd.DataFrame) -> list[str]:
     buffer: list[str] = []
     probabilities, labels = filter_top_k_results(prediction, 1)
     # There is only one element in each list:
-    # Dataset starts from index 0:
-    processed_label = labels[0] - 1
+    processed_label = labels[0]
     buffer.append(f"This flower is most likely: {processed_label}")
     buffer.append(f"    Probability: {probabilities[0]:.2%}")
     return buffer
@@ -54,11 +62,9 @@ def basic_output(prediction: pd.DataFrame) -> list[str]:
 def top_k_output(prediction: pd.DataFrame, k_value: int) -> list[str]:
     buffer: list[str] = []
     probabilities, labels = filter_top_k_results(prediction, k_value)
-    # Dataset starts from index 0:
-    processed_labels = [label - 1 for label in labels]
     buffer.append(f"Here are the {k_value} most-likely results (from most- to least-likely):")
     for iteration in range(k_value):
-        buffer.append(f"    {iteration + 1}. Label: {processed_labels[iteration]}, Likelihood: {probabilities[iteration]:.2%}")
+        buffer.append(f"    {iteration + 1}. Label: {labels[iteration]}, Likelihood: {probabilities[iteration]:.2%}")
     return buffer
 
 
